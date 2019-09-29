@@ -1,5 +1,5 @@
 import rospy, serial, struct, time, copy
-
+from AONav.msg import PDstatus
 
 
 
@@ -11,8 +11,8 @@ class Photodiode(object):
 		rospy.init_node("pd_driver")
 		self._PORT_NAME = rospy.get_param("~PORT_NAME", "/dev/ttyUSB0")
 		self.port = serial.Serial(self._PORT_NAME, 115200, timeout=0.1)  # default 115200
-		self.pub = rospy.Publisher('micron_status', MicronStatus, queue_size=10)
-
+		self.pub = rospy.Publisher('PD_status', PDstatus, queue_size=10)
+		self.msg = PDstatus
 
 
 
@@ -36,6 +36,9 @@ class Photodiode(object):
 		time_interval = ord(line[3])
 		print time_interval
 		intensity = ord(line[1])
+		self.msg.header.stamp = rospy.get_rostime()
+		self.msg.intensity = intensity
+		self.pub.publish(self.msg)
 		print intensity
 
 		
