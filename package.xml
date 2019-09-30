@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>Acousto-Optic_Localization</name>
+  <name>AONav</name>
   <version>0.0.0</version>
   <description>Acousto-Optic_Localization package</description>
 
