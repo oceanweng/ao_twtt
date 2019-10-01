@@ -3,7 +3,7 @@
 
 
 import rospy, serial, struct, time, copy
-#from ao_twtt.msg import PDstatus
+from ao_twtt.msg import PDstatus
 from std_msgs.msg import String
 
 
@@ -12,7 +12,7 @@ class Photodiode(object):
 
 	def __init__(self):
 		rospy.init_node("pd_driver")
-		self._PORT_NAME = rospy.get_param("~PORT_NAME", "/dev/ttyACM1")
+		self._PORT_NAME = rospy.get_param("~PORT_NAME", "/dev/ttyACM0")
 		self.port = serial.Serial(self._PORT_NAME, 115200, timeout=0.1)  # default 115200
 		#self.pub = rospy.Publisher('PD_status', PDstatus, queue_size=10)
 		#self.msg = PDstatus
@@ -51,9 +51,14 @@ class Photodiode(object):
 
 	def run(self):
 		self.port.flushInput()  # clear input buffer
+		self.port.flushOutput()  # clear input buffer
 		while not rospy.is_shutdown():
+                        print self.port.in_waiting, self.port.out_waiting
 			buf = self.port.readline()
 			self.parse(buf)
+                        self.port.flushInput()  # clear input buffer
+		        self.port.flushOutput()  # clear input buffer
+                        time.sleep(0.1)
    #if self.port.readline().startswith('R,'):
 
 
