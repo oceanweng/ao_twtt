@@ -129,8 +129,10 @@ class Seatrac(object):
             self._local_roll = buf[6] / 10.0   #The roll angle of the local beacon when the fix was computed.
             self._local_depth = buf[7] / 10.0  #The reading from the local beacon depth sensor when the fix was calculated.
             self._velocity_of_sound = buf[8] / 10.0   #The velocity of sound value used for the computation of the remote beacon's range.
+            #velocity divide by 10 for a value in metres-per-second.
             self._rssi = buf[9] / 10.0   #The Received Signal Strength Indicator value for the received message
             #print 'RSSI: ' + str(self._rssi)
+            self._ssblrx.velocityofsound = self._velocity_of_sound
             if self._flags & 0b0001: # RANGE_VALID
                 buf = unpack('<IiH', dat[ind:ind+10])
                 ind += 10
