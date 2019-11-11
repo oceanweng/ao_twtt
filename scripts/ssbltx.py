@@ -113,7 +113,8 @@ class Seatrac(object):
                 self._t_ping = now
                 self.SetData(self._txd)
 
-            self._rate.sleep()
+            #self._rate.sleep()
+            time.sleep(10.0)
 
 if __name__ == '__main__':
     rospy.init_node('seatrac')

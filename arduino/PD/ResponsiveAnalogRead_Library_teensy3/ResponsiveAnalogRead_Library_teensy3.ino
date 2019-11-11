@@ -1,10 +1,14 @@
+
 unsigned long time;
 unsigned long between;
 unsigned long last;
 unsigned int  AnaVal;
-
+int incheck = 0;
+int intensity[50] = {};
+int intensitycheck[50] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 byte  AnaVal_H;
 byte  AnaVal_L;
+int detectsize = sizeof (intensity)/sizeof(intensity[0]);
 
 // include the ResponsiveAnalogRead library
 
@@ -33,14 +37,14 @@ void setup() {
   while (!Serial)
   {
     }
-  Timer1.initialize(1000);         
+  Timer1.initialize(100000);         
   Timer1.attachInterrupt(AnRead); // to run every initialize(xxx); seconds
 
   analogReadResolution(12);
   AnalogCVpot.enableSleep();
   AnalogCVpot.enableEdgeSnap();
   AnalogCVpot.setAnalogResolution(4096);
-  
+
 }
 
 
@@ -49,25 +53,71 @@ void AnRead(void) // update the ResponsiveAnalogRead object interrupt.
   last = time;
   time = micros();
   between = time - last;
-  
+  incheck = 0;
  
   AnalogCVpot.update();
   AnaVal=AnalogCVpot.getValue();
 
+  Serial.print("current intensity:"); 
+  Serial.print(AnaVal); 
+  Serial.println();
+
+    for ( int i = 0; i < detectsize-1; i++ ) // initialize elements of array n to 0 
+   {
+      intensity[i] = intensity[i+1];
+   }
+   
+    if (AnaVal > 250) 
+    {
+      intensity[detectsize-1] = 1; 
+    }
+    else 
+    {
+      intensity[detectsize-1] = 0;
+    }
+      
+    for ( int i = 0; i < detectsize; i++ )
+    {
+
+    if (i % 10 == 0 && i != 0)
+    { 
+    Serial.print(",");
+    }
+        Serial.print(intensity[i]); 
+    }
+    Serial.println();  
+
+
+    for ( int i = 0; i < detectsize; i++ ) // initialize elements of array n to 0 
+   {
+
+      
+      if (intensity[i] == intensitycheck[i])
+      {
+        incheck = incheck + 1;
+        //Serial.println(incheck); 
+        //Serial.println(sizeof (intensity));
+        }
+      if (incheck == (sizeof (intensity)/sizeof(intensity[0])))
+      {
+        Serial.println("Goooooooooooooooot"); 
+        }
+   }
 
   // Bit shift CALC  High side ASCII / LOW side ASCII
-  AnaVal_H =  (unsigned int)AnaVal >> 8;
-  AnaVal_L = AnaVal;
+  //AnaVal_H =  (unsigned int)AnaVal >> 8;
+  //AnaVal_L = AnaVal;
 
-  Serial.print("$"); 
+  //Serial.print("$"); 
   //Serial.print(AnaVal,DEC);
-  Serial.write(AnaVal_H);
+  //Serial.write(AnaVal_H);
 
-  Serial.write(AnaVal_L);
+  //Serial.write(AnaVal_L);
 
-  Serial.print(",");
-  Serial.write(between);
+  //Serial.print(",");
+  //Serial.write(between);
   Serial.println();
+  Serial.println(between);
 }
 
 
