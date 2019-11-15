@@ -30,23 +30,24 @@ class Photodiode(object):
 
 	def parse(self,line):
 		if len(line) == 0:
-			print 'No data'
+			#print 'No data'
 			return
-		elif len(line)!= 7:
+		elif len(line)!= 3:
 			#print line
 			return
-		elif line[0]!='$':
-			print 'ERR0R: Wrong header'
-			print line
-			return
-		time_interval = ord(line[4])
-		intensity_H = ord(line[1])
-		intensity_L = ord(line[2])
-		intensity_H = intensity_H << 8
-		intensity = intensity_H + intensity_L	
-		self.msg.header.stamp = rospy.get_rostime()
-		self.msg.intensity = intensity
-		self.pub.publish(self.msg)
+		#elif line[0]!='$':
+			#print 'ERR0R: Wrong header'
+			#print line
+			#return
+		#time_interval = ord(line[4])
+		#intensity_H = ord(line[1])
+		#intensity_L = ord(line[2])
+		#intensity_H = intensity_H << 8
+		#intensity = intensity_H + intensity_L	
+		if line == 'Got' :
+			self.msg.header.stamp = rospy.get_rostime()
+			#self.msg.intensity = intensity
+			self.pub.publish(self.msg)
 		#print intensity
 
 		

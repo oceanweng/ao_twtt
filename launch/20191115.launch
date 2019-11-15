@@ -1,0 +1,7 @@
+<launch>
+
+	<node pkg='ao_owtt' name='pd_driver' type='photodiode.py'/>
+	<node pkg='ao_owtt' name='seatrac' type='ssblrx.py'/>
+	<node pkg='ao_owtt' name='ao_calculation' type='aocalc.py'/>
+
+</launch>

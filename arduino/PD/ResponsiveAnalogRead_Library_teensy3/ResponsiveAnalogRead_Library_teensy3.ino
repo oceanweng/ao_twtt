@@ -8,8 +8,11 @@ int intensity[50] = {};
 int intensitycheck[50] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 byte  AnaVal_H;
 byte  AnaVal_L;
-int detectsize = sizeof (intensity)/sizeof(intensity[0]);
 
+int detectsize = sizeof (intensity)/sizeof(intensity[0]);
+int intensitymid = 250;
+
+int printindicate = 0;
 // include the ResponsiveAnalogRead library
 
 #include <TimerOne.h>
@@ -58,16 +61,16 @@ void AnRead(void) // update the ResponsiveAnalogRead object interrupt.
   AnalogCVpot.update();
   AnaVal=AnalogCVpot.getValue();
 
-  Serial.print("current intensity:"); 
-  Serial.print(AnaVal); 
-  Serial.println();
+  //Serial.print("current intensity:"); 
+  //Serial.print(AnaVal); 
+  //Serial.println();
 
     for ( int i = 0; i < detectsize-1; i++ ) // initialize elements of array n to 0 
    {
       intensity[i] = intensity[i+1];
    }
    
-    if (AnaVal > 250) 
+    if (AnaVal > intensitymid) 
     {
       intensity[detectsize-1] = 1; 
     }
@@ -75,19 +78,21 @@ void AnRead(void) // update the ResponsiveAnalogRead object interrupt.
     {
       intensity[detectsize-1] = 0;
     }
-      
-    for ( int i = 0; i < detectsize; i++ )
+
+
+    if (printindicate == 1)  
     {
-
-    if (i % 10 == 0 && i != 0)
-    { 
-    Serial.print(",");
+      for ( int i = 0; i < detectsize; i++ )
+        {
+          if (i % 10 == 0 && i != 0)
+            { 
+              Serial.print(",");
+            }
+          Serial.print(intensity[i]); 
+        }
+      Serial.println();  
     }
-        Serial.print(intensity[i]); 
-    }
-    Serial.println();  
-
-
+    
     for ( int i = 0; i < detectsize; i++ ) // initialize elements of array n to 0 
    {
 
@@ -100,7 +105,7 @@ void AnRead(void) // update the ResponsiveAnalogRead object interrupt.
         }
       if (incheck == (sizeof (intensity)/sizeof(intensity[0])))
       {
-        Serial.println("Goooooooooooooooot"); 
+        Serial.println("Got"); 
         }
    }
 
@@ -116,8 +121,8 @@ void AnRead(void) // update the ResponsiveAnalogRead object interrupt.
 
   //Serial.print(",");
   //Serial.write(between);
-  Serial.println();
-  Serial.println(between);
+  //Serial.println();
+  //Serial.println(between);
 }
 
 
