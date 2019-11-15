@@ -21,7 +21,6 @@ class Photodiode(object):
 
 
  		time.sleep(1.0)
-		self.port.flushInput()  # clear input buffer
 
 
 
@@ -37,7 +36,7 @@ class Photodiode(object):
 	def run(self):
 		while not rospy.is_shutdown():
 
-			self.parse(buf)
+			self.parse()
 			time.sleep(10.0)
 
 

@@ -13,7 +13,7 @@ class Photodiode(object):
 	def __init__(self):
 		rospy.init_node("pd_driver")
 		self._PORT_NAME = rospy.get_param("~PORT_NAME", "/dev/ttyACM0")
-		self.port = serial.Serial(self._PORT_NAME, 115200, timeout=0.1)  # default 115200
+		self.port = serial.Serial(self._PORT_NAME, 115200, timeout=5)  # default 115200
 		self.pub = rospy.Publisher('PD_status', PDstatus, queue_size=10)
 		self.msg = PDstatus()
 
@@ -30,10 +30,10 @@ class Photodiode(object):
 
 	def parse(self,line):
 		if len(line) == 0:
-			#print 'No data'
+			print 'No data'
 			return
-		elif len(line)!= 3:
-			#print line
+		elif len(line)!= 5:
+			print line
 			return
 		#elif line[0]!='$':
 			#print 'ERR0R: Wrong header'
@@ -44,7 +44,7 @@ class Photodiode(object):
 		#intensity_L = ord(line[2])
 		#intensity_H = intensity_H << 8
 		#intensity = intensity_H + intensity_L	
-		if line == 'Got' :
+		if line[0] == 'G' :
 			self.msg.header.stamp = rospy.get_rostime()
 			#self.msg.intensity = intensity
 			self.pub.publish(self.msg)

@@ -21,8 +21,8 @@ from ao_twtt.msg import SSBLrx
 class Seatrac(object):
     def __init__(self):
         #変数の設定。ほぼ固定だが、別ロボットへの移植を考慮してset paramで変えられるようにしている
-        self._port_name = rospy.get_param('~port_name', '/dev/ttyUSB7')
-        self._update_rate = rospy.get_param('~rate', 3) #更新レート
+        self._port_name = rospy.get_param('~port_name', '/dev/ttyUSB0')
+        self._update_rate = rospy.get_param('~rate', 20) #更新レート
         #変数の設定ここまで。set param使わないと引数２番めのデフォルト値が渡る
         self._port = serial.Serial(self._port_name, 115200, timeout=0.2)
         #self._pub = rospy.Publisher('ssbl_status', SSBL_Status, queue_size=self._update_rate)
@@ -80,6 +80,13 @@ class Seatrac(object):
             self.parse(line)
          except serial.serialutil.SerialException:
             pass
+    def str2bytes(self, line):  #文字列のメッセージをバイト列に変換　line の長さは2の倍数であること
+        val = []
+        for i in range(0, len(line) - 1, 2):
+            val.append(int(line[i:i+2], 16))
+        form = str(len(val)) + 'B'  # 全てB(unsigned char)としてバイト化
+        dat = pack(form, *val)
+        return dat
 
     def parse(self, line):  #メッセージをデコードして値を更新する
         if len(line) < 8:
@@ -206,7 +213,8 @@ class Seatrac(object):
         #else:
             #print(line)
             #print len(line)
-        self.publish()
+        #if cid
+		self.publish()
 
     def publish(self):
         # publish time

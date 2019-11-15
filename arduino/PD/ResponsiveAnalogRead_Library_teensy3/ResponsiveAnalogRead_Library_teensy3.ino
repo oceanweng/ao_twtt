@@ -4,13 +4,15 @@ unsigned long between;
 unsigned long last;
 unsigned int  AnaVal;
 int incheck = 0;
-int intensity[50] = {};
-int intensitycheck[50] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+int intensity[15] = {};
+//int intensitycheck[30] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+//int intensitycheck[30] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int intensitycheck[15] = {0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0};
 byte  AnaVal_H;
 byte  AnaVal_L;
 
 int detectsize = sizeof (intensity)/sizeof(intensity[0]);
-int intensitymid = 250;
+int intensitymid = 2000;
 
 int printindicate = 0;
 // include the ResponsiveAnalogRead library
