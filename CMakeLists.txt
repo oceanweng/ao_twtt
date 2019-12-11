@@ -54,6 +54,7 @@ find_package(catkin REQUIRED COMPONENTS
  PDstatus.msg
  SSBLrx.msg
  AOcalc.msg
+ ACstatus.msg
 #   Message1.msg
 #   Message2.msg
  )

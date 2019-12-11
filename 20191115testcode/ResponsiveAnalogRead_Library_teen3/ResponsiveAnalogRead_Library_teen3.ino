@@ -13,7 +13,7 @@ byte  AnaVal_L;
 
 int detectsize = sizeof (intensity)/sizeof(intensity[0]);
 int intensitymid = 3030;
-
+int indicate = 1;
 int printindicate = 0;
 int printintensity = 0;
 // include the ResponsiveAnalogRead library
@@ -43,7 +43,7 @@ void setup() {
   while (!Serial)
   {
     }
-  Timer1.initialize(100);         
+  Timer1.initialize(100000);         
   Timer1.attachInterrupt(AnRead); // to run every initialize(xxx); seconds
 
   analogReadResolution(12);
@@ -56,79 +56,13 @@ void setup() {
 
 void AnRead(void) // update the ResponsiveAnalogRead object interrupt.
 {
-  last = time;
-  time = micros();
-  between = time - last;
-  incheck = 0;
- 
-  AnalogCVpot.update();
-  AnaVal=AnalogCVpot.getValue();
-  if (printintensity == 1)  
+  indicate = indicate +1 ;
+  if (indicate % 30 == 0 )
     {
-  Serial.print("current intensity:"); 
-  Serial.print(AnaVal); 
-  Serial.println();
-
+      Serial.println("Got"); 
+      indicate = 0;
     }
-
-    for ( int i = 0; i < detectsize-1; i++ ) // initialize elements of array n to 0 
-   {
-      intensity[i] = intensity[i+1];
-   }
-   
-    if (AnaVal > intensitymid) 
-    {
-      intensity[detectsize-1] = 1; 
-    }
-    else 
-    {
-      intensity[detectsize-1] = 0;
-    }
-
-
-    if (printindicate == 1)  
-    {
-      for ( int i = 0; i < detectsize; i++ )
-        {
-          if (i % 10 == 0 && i != 0)
-            { 
-              Serial.print(",");
-            }
-          Serial.print(intensity[i]); 
-        }
-      Serial.println();  
-    }
-    
-    for ( int i = 0; i < detectsize; i++ ) // initialize elements of array n to 0 
-   {
-
-      
-      if (intensity[i] == intensitycheck[i])
-      {
-        incheck = incheck + 1;
-        //Serial.println(incheck); 
-        //Serial.println(sizeof (intensity));
-        }
-      if (incheck == (sizeof (intensity)/sizeof(intensity[0])))
-      {
-        Serial.println("Got"); 
-        }
-   }
-
-  // Bit shift CALC  High side ASCII / LOW side ASCII
-  //AnaVal_H =  (unsigned int)AnaVal >> 8;
-  //AnaVal_L = AnaVal;
-
-  //Serial.print("$"); 
-  //Serial.print(AnaVal,DEC);
-  //Serial.write(AnaVal_H);
-
-  //Serial.write(AnaVal_L);
-
-  //Serial.print(",");
-  //Serial.write(between);
-  //Serial.println();
-  //Serial.println(between);
+  
 }
 
 

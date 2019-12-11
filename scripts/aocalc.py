@@ -20,26 +20,32 @@ class AcousticOptical(object):
 		self.pd_time = 0
 		self.timediff = 0
 		self.velocityofsound = 0
-
+		self.acousticflag = 0
+		self.opticalflag = 0
 
 	def _update_ssbl_time(self, msg):
                 #print("update ssbl")
 		self.ssbl_time = msg.header.stamp.to_sec()
 		#print(self.ssbl_time)
 		#self.ssbl_time = msg.time_SSBLrx
-		self.velocityofsound = msg.velocityofsound
+		#self.velocityofsound = msg.velocityofsound
+		self.velocityofsound = 340
+		#self.acousticflag = 1
+		#if (self.opticalflag == 1):
 		self.cal()
 
 	def _update_pd_time(self, msg):	
 		#print("update pd time")
                 #t = rospy.Time(1)
-		self.pd_time = msg.header.stamp.to_sec()-1
-		
+		self.pd_time = msg.header.stamp.to_sec()-0.0001
+		self.opticalflag = 1
+		#if (self.acousticflag == 1):
+		#	self.cal()
 
 	def cal(self):
- 		time.sleep(1.0)
+ 		time.sleep(0.5)
 		print("PD",self.pd_time)
-		print("ssbl",self.ssbl_time)
+		print("SSBL",self.ssbl_time)
 		if (self.ssbl_time - self.pd_time) > 0:	
 			self.timediff = self.ssbl_time - self.pd_time
 			#print(self.timediff)
@@ -49,10 +55,13 @@ class AcousticOptical(object):
 				#print(seconds)
 				#print(nanoseconds)
 				self.range = self.velocityofsound * seconds
-				print(seconds)
+				print("Time diff",seconds)
+				print("Distance diff",self.range)
 				self.msg.header.stamp = rospy.get_rostime()
 				self.msg.inter_range = self.range
 				self.pub.publish(self.msg)
+		#self.acousticflag = 0
+		#self.opticalflag = 0
 
 
 

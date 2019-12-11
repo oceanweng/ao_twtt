@@ -7,7 +7,6 @@ from ao_twtt.msg import PDstatus
 from std_msgs.msg import String
 
 
-
 class Photodiode(object):
 
 	def __init__(self):
@@ -16,7 +15,7 @@ class Photodiode(object):
 		self.port = serial.Serial(self._PORT_NAME, 115200, timeout=5)  # default 115200
 		self.pub = rospy.Publisher('PD_status', PDstatus, queue_size=10)
 		self.msg = PDstatus()
-
+		self.optime = 0
 
 
 
@@ -27,10 +26,9 @@ class Photodiode(object):
 
 
 
-
 	def parse(self,line):
 		if len(line) == 0:
-			print 'No data'
+			#print 'No data'
 			return
 		elif len(line)!= 5:
 			print line
@@ -45,9 +43,15 @@ class Photodiode(object):
 		#intensity_H = intensity_H << 8
 		#intensity = intensity_H + intensity_L	
 		if line[0] == 'G' :
+			#print ( rospy.get_rostime()-self.msg.header.stamp)
 			self.msg.header.stamp = rospy.get_rostime()
 			#self.msg.intensity = intensity
 			self.pub.publish(self.msg)
+			print("pre time",self.optime)
+			print("now time",self.msg.header.stamp.to_sec())
+			print ("diff", self.msg.header.stamp.to_sec()-self.optime)
+			print("")
+			self.optime = self.msg.header.stamp.to_sec()
 		#print intensity
 
 		

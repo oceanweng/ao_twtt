@@ -22,7 +22,7 @@ class Seatrac(object):
     def __init__(self):
         #変数の設定。ほぼ固定だが、別ロボットへの移植を考慮してset paramで変えられるようにしている
         self._port_name = rospy.get_param('~port_name', '/dev/ttyUSB0')
-        self._update_rate = rospy.get_param('~rate', 20) #更新レート
+        self._update_rate = rospy.get_param('~rate', 100) #更新レート
         #変数の設定ここまで。set param使わないと引数２番めのデフォルト値が渡る
         self._port = serial.Serial(self._port_name, 115200, timeout=0.2)
         #self._pub = rospy.Publisher('ssbl_status', SSBL_Status, queue_size=self._update_rate)
@@ -72,11 +72,11 @@ class Seatrac(object):
         self._start_flag = 0
         #self._auv_status = AUV_Status()
         #self._auv_sub = rospy.Subscriber('auv_status', AUV_Status, self.auv_handler)
-
+	self.actime = 0
     def refresh(self):   # データを読み取り、更新する
          try:        
             line = self._port.readline()
-            print(line)
+            #print(line)
             self.parse(line)
          except serial.serialutil.SerialException:
             pass
@@ -111,9 +111,9 @@ class Seatrac(object):
 
 
         if cid == 0x61:  # CID_NAV_QUERY_RESP p.117
-
-            self._ssblrx.time_SSBLrx = time.time()
-
+	
+            #self._ssblrx.time_SSBLrx = time.time()
+	    self.publish()
 
             #self.remote[0].time = self.rcvtime  #remoteのインデックスはとりあえずゼロのみとする
             #print(line)
@@ -214,7 +214,7 @@ class Seatrac(object):
             #print(line)
             #print len(line)
         #if cid
-		self.publish()
+	#	self.publish()
 
     def publish(self):
         # publish time
@@ -222,7 +222,11 @@ class Seatrac(object):
         self._pub.publish(self._ssblrx)
         self._port.flushInput()
         self._port.flushOutput()
-
+	print("pre time",self.actime)
+	print("now time",self._ssblrx.header.stamp.to_sec())
+	print ("diff",self._ssblrx.header.stamp.to_sec()-self.actime)
+	print("")
+	self.actime = self._ssblrx.header.stamp.to_sec()
 
     def run(self):
         while not rospy.is_shutdown():
